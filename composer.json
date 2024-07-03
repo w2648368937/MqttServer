@@ -1,0 +1,25 @@
+{
+    "name": "cherrain/mqtt-server",
+    "type": "library",
+    "description": "hyperf Mqtt服务端",
+    "keywords": ["hyperf","Mqtt服务端"],
+    "homepage": "https://www.huizhouyiren.com",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "樱恋雨",
+            "email": "2648368937@qq.com"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cherrain\\MqttServer\\": "src/"
+        }
+    },
+    "extra": {
+
+    }
+}
