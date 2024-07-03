@@ -17,7 +17,7 @@ class Common
                 switch ($pack['type']) {
                     case Types::PINGREQ: // 心跳请求
                         [$class, $func] = $this->receiveCallbacks[Types::PINGREQ];
-                        $obj = new $class();
+                        $obj = new $class($this);
                         if ($obj->{$func}($server, $fd, $fromId, $pack)) {
                             // 返回心跳响应
                             $server->send($fd, $this->pack(['type' => Types::PINGRESP]));
@@ -25,7 +25,7 @@ class Common
                         break;
                     case Types::DISCONNECT: // 客户端断开连接
                         [$class, $func] = $this->receiveCallbacks[Types::DISCONNECT];
-                        $obj = new $class();
+                        $obj = new $class($this);
                         if ($obj->{$func}($server, $fd, $fromId, $pack)) {
                             if ($server->exist($fd)) {
                                 $server->close($fd);
