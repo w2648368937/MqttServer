@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Cherrain\MqttServer\Tools;
 
+use Cherrain\MqttServer\Exception\InvalidArgumentException;
 use Cherrain\MqttServer\Exception\LengthException;
+use Cherrain\MqttServer\Protocol\Types;
 
 class UnPackTool extends Common
 {
@@ -87,5 +89,22 @@ class UnPackTool extends Common
         } while (($digit & 128) != 0);
 
         return $value;
+    }
+
+    /**
+     * Get the MQTT protocol level.
+     */
+    public static function getLevel(string $data): int
+    {
+        $type = static::getType($data);
+
+        if ($type !== Types::CONNECT) {
+            throw new InvalidArgumentException(sprintf('packet must be of type connect, %s given', Types::getType($type)));
+        }
+
+        $remaining = static::getRemaining($data);
+        $length = unpack('n', $remaining)[1];
+
+        return ord($remaining[$length + 2]);
     }
 }

@@ -17,7 +17,6 @@ use TypeError;
 
 class V3 extends Common implements ProtocolInterface
 {
-    protected $receiveCallbacks;
 
     public function pack(array $array): string
     {
@@ -126,8 +125,5 @@ class V3 extends Common implements ProtocolInterface
         return $package;
     }
 
-    public function setCallbacks($callback)
-    {
-        $this->receiveCallbacks = $callback;
-    }
+
 }

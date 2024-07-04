@@ -1,8 +1,18 @@
 <?php
 
 declare(strict_types=1);
-
+/**
+ * This file is part of Simps.
+ *
+ * @link     https://github.com/simps/mqtt
+ * @contact  Lu Fei <lufei@simps.io>
+ *
+ * For the full copyright and license information,
+ * please view the LICENSE file that was distributed with this source code.
+ */
 namespace Cherrain\MqttServer\Packet;
+
+
 
 use Cherrain\MqttServer\Hex\ReasonCode;
 use Cherrain\MqttServer\Property\PackProperty;
@@ -15,44 +25,44 @@ class PackV5
     {
         $body = PackTool::string($array['protocol_name']) . chr($array['protocol_level']);
         $connectFlags = 0;
-        if (! empty($array['clean_session'])) {
+        if (!empty($array['clean_session'])) {
             $connectFlags |= 1 << 1;
         }
-        if (! empty($array['will'])) {
+        if (!empty($array['will'])) {
             $connectFlags |= 1 << 2;
             if (isset($array['will']['qos'])) {
                 $connectFlags |= $array['will']['qos'] << 3;
             }
-            if (! empty($array['will']['retain'])) {
+            if (!empty($array['will']['retain'])) {
                 $connectFlags |= 1 << 5;
             }
         }
-        if (! empty($array['password'])) {
+        if (!empty($array['password'])) {
             $connectFlags |= 1 << 6;
         }
-        if (! empty($array['user_name'])) {
+        if (!empty($array['user_name'])) {
             $connectFlags |= 1 << 7;
         }
         $body .= chr($connectFlags);
 
-        $keepAlive = ! empty($array['keep_alive']) && (int) $array['keep_alive'] >= 0 ? (int) $array['keep_alive'] : 0;
+        $keepAlive = !empty($array['keep_alive']) && (int) $array['keep_alive'] >= 0 ? (int) $array['keep_alive'] : 0;
         $body .= PackTool::shortInt($keepAlive);
 
         // CONNECT Properties
         $body .= PackProperty::connect($array['properties'] ?? []);
 
         $body .= PackTool::string($array['client_id']);
-        if (! empty($array['will'])) {
+        if (!empty($array['will'])) {
             // Will Properties
             $body .= PackProperty::willProperties($array['will']['properties'] ?? []);
 
             $body .= PackTool::string($array['will']['topic']);
             $body .= PackTool::string($array['will']['message']);
         }
-        if (! empty($array['user_name'])) {
+        if (!empty($array['user_name'])) {
             $body .= PackTool::string($array['user_name']);
         }
-        if (! empty($array['password'])) {
+        if (!empty($array['password'])) {
             $body .= PackTool::string($array['password']);
         }
         $head = PackTool::packHeader(Types::CONNECT, strlen($body));
@@ -62,8 +72,8 @@ class PackV5
 
     public static function connAck(array $array): string
     {
-        $body = ! empty($array['session_present']) ? chr(1) : chr(0);
-        $code = ! empty($array['code']) ? $array['code'] : 0;
+        $body = !empty($array['session_present']) ? chr(1) : chr(0);
+        $code = !empty($array['code']) ? $array['code'] : 0;
         $body .= chr($code);
 
         // CONNACK Properties
@@ -173,7 +183,7 @@ class PackV5
 
     public static function disconnect(array $array): string
     {
-        $code = ! empty($array['code']) ? $array['code'] : ReasonCode::NORMAL_DISCONNECTION;
+        $code = !empty($array['code']) ? $array['code'] : ReasonCode::NORMAL_DISCONNECTION;
         $body = chr($code);
 
         // DISCONNECT Properties
@@ -187,7 +197,7 @@ class PackV5
     public static function genReasonPhrase(array $array): string
     {
         $body = PackTool::shortInt($array['message_id']);
-        $code = ! empty($array['code']) ? $array['code'] : ReasonCode::SUCCESS;
+        $code = !empty($array['code']) ? $array['code'] : ReasonCode::SUCCESS;
         $body .= chr($code);
 
         // pubAck, pubRec, pubRel, pubComp Properties
@@ -204,7 +214,7 @@ class PackV5
 
     public static function auth(array $array): string
     {
-        $code = ! empty($array['code']) ? $array['code'] : ReasonCode::SUCCESS;
+        $code = !empty($array['code']) ? $array['code'] : ReasonCode::SUCCESS;
         $body = chr($code);
 
         // AUTH Properties

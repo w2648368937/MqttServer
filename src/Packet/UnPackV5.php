@@ -1,9 +1,22 @@
 <?php
 
-
+declare(strict_types=1);
+/**
+ * This file is part of Simps.
+ *
+ * @link     https://github.com/simps/mqtt
+ * @contact  Lu Fei <lufei@simps.io>
+ *
+ * For the full copyright and license information,
+ * please view the LICENSE file that was distributed with this source code.
+ */
 namespace Cherrain\MqttServer\Packet;
 
 
+
+use Cherrain\MqttServer\Hex\ReasonCode;
+use Cherrain\MqttServer\Property\UnPackProperty;
+use Cherrain\MqttServer\Protocol\Types;
 use Cherrain\MqttServer\Tools\UnPackTool;
 
 class UnPackV5
@@ -25,6 +38,7 @@ class UnPackV5
             $properties = UnPackProperty::connect($propertiesTotalLength, $remaining);
         }
         $clientId = UnPackTool::string($remaining);
+        $willProperties = [];
         if ($willFlag) {
             $willPropertiesTotalLength = UnPackTool::byte($remaining);
             if ($willPropertiesTotalLength) {

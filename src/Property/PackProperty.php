@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Cherrain\MqttServer\Property;
 
+use Cherrain\MqttServer\Hex\Property;
+use Cherrain\MqttServer\Tools\PackTool;
+
 class PackProperty
 {
     public static function connect(array $data): string

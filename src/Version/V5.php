@@ -16,13 +16,10 @@ use TypeError;
 
 class V5 extends Common implements ProtocolInterface
 {
-    protected $receiveCallbacks;
+
 
     public function pack(array $array): string
     {
-        if (! $array['type']) {
-            return '';
-        }
         $type = $array['type'];
         switch ($type) {
             case Types::CONNECT:
@@ -121,8 +118,4 @@ class V5 extends Common implements ProtocolInterface
         return $package;
     }
 
-    public function setCallbacks($callback)
-    {
-        $this->receiveCallbacks = $callback;
-    }
 }
