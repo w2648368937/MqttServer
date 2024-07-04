@@ -36,7 +36,7 @@ interface ProtocolInterface
 
     public const MQTT_SESSION_PRESENT_1 = 1;
 
-    public function pack(array $array): string;
+    public static function pack(array $array): string;
 
-    public function unpack(string $data): array;
+    public static function unpack(string $data): array;
 }

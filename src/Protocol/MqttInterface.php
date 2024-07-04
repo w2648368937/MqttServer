@@ -4,23 +4,27 @@ declare(strict_types=1);
 
 namespace Cherrain\MqttServer\Protocol;
 
+use Cherrain\MqttServer\Vo\RequestVo;
+
 interface MqttInterface
 {
     // 1
-    public function onMqConnect($server, int $fd, $fromId, $data);
+    public function onMqConnect(RequestVo $request, int $fd, $fromId, $data);
 
     // 12
-    public function onMqPingreq($server, int $fd, $fromId, $data): bool;
+    public function onMqPingreq(RequestVo $request, int $fd, $fromId, $data): bool;
 
     // 14
-    public function onMqDisconnect($server, int $fd, $fromId, $data): bool;
+    public function onMqDisconnect(RequestVo $request, int $fd, $fromId, $data): bool;
 
     // 3
-    public function onMqPublish($server, int $fd, $fromId, $data);
+    public function onMqPublish(RequestVo $request, int $fd, $fromId, $data);
 
     // 8
-    public function onMqSubscribe($server, int $fd, $fromId, $data);
+    public function onMqSubscribe(RequestVo $request, int $fd, $fromId, $data);
 
     // 10
-    public function onMqUnsubscribe($server, int $fd, $fromId, $data);
+    public function onMqUnsubscribe(RequestVo $request, int $fd, $fromId, $data);
+
+    public function onMqClose(RequestVo $request, int $fd, $fromId);
 }

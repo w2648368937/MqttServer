@@ -14,11 +14,11 @@ use Cherrain\MqttServer\Tools\UnPackTool;
 use Throwable;
 use TypeError;
 
-class V5 extends Common implements ProtocolInterface
+class V5 implements ProtocolInterface
 {
 
 
-    public function pack(array $array): string
+    public static function pack(array $array): string
     {
         $type = $array['type'];
         switch ($type) {
@@ -66,7 +66,7 @@ class V5 extends Common implements ProtocolInterface
         return $package;
     }
 
-    public function unpack(string $data): array
+    public static function unpack(string $data): array
     {
         $type = UnPackTool::getType($data);
         $remaining = UnPackTool::getRemaining($data);

@@ -166,7 +166,7 @@ class MqttServer implements MqttInterface
             if (is_numeric($qos) && $qos < 3) {
                 $payload[] = $qos;
             } else {
-                $payload[] = \Simps\MQTT\Hex\ReasonCode::QOS_NOT_SUPPORTED;
+                $payload[] = \Cherrain\MqttServer\Hex\ReasonCode::QOS_NOT_SUPPORTED;
             }
         }
         $server->send(
