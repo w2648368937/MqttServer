@@ -112,6 +112,9 @@ class Server
     public function onClose(SwooleServer $server, $fd, $fromId)
     {
         try {
+            $cache = $this->container->get(CacheInterface::class);
+            $protocolLevelKey = ProtocolInterface::class.":" . $fd;
+            $cache->delete($protocolLevelKey);
             $request = new RequestVo();
             $request->setServer($server);
             [$class, $func] = $this->receiveCallbacks['close'];
