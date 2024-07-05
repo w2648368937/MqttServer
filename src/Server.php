@@ -50,12 +50,12 @@ class Server
 
         $cache = $this->container->get(CacheInterface::class);
         $protocolLevelKey = ProtocolInterface::class.":" . $fd;
-//        try {
+        try {
             $protocolLevel = $cache->get($protocolLevelKey);
             if (UnPackTool::getType($data) == Types::CONNECT) {
                 $cache->set($protocolLevelKey, $protocolLevel = UnPackTool::getLevel($data));
             }
-            echo "\033[0;31mProtocolLevel: {$protocolLevel}\033[0m\r\n";
+            //echo "\033[0;31mProtocolLevel: {$protocolLevel}\033[0m\r\n";
             $class = $protocolLevel !== ProtocolInterface::MQTT_PROTOCOL_LEVEL_5_0 ? V3::class : V5::class;
             if (!$this->container->has($class)) {
                 $server->close($fd);
@@ -101,19 +101,25 @@ class Server
             } else {
                 $server->close($fd);
             }
-//        }catch (\Exception $exception){
-//            echo "\033[0;31mError: msg[$data]\033[0m\r\n";
-//            echo "\033[0;31mError: {$exception->getMessage()}\033[0m\r\n";
-//        }
+        }catch (\Exception $exception){
+            echo "\033[0;31mError: msg[$data]\033[0m\r\n";
+            echo "\033[0;31mError: {$exception->getMessage()}\033[0m\r\n";
+            $server->close($fd);
+        }
 
     }
 
     public function onClose(SwooleServer $server, $fd, $fromId)
     {
-        $request = new RequestVo();
-        $request->setServer($server);
-        [$class, $func] = $this->receiveCallbacks['close'];
-        $obj = new $class($this->unPackServer);
-        $obj->{$func}($request, $fd, $fromId);
+        try {
+            $request = new RequestVo();
+            $request->setServer($server);
+            [$class, $func] = $this->receiveCallbacks['close'];
+            $obj = new $class($this->unPackServer);
+            $obj->{$func}($request, $fd, $fromId);
+        }catch (\Exception $exception){
+            echo "\033[0;31mError: {$exception->getMessage()}\033[0m\r\n";
+        }
+
     }
 }
