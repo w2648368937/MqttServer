@@ -54,7 +54,6 @@ class Server
             if (UnPackTool::getType($data) == Types::CONNECT) {
                 Context::set('protocolLevel', $protocolLevel = UnPackTool::getLevel($data));
             }
-            var_dump($protocolLevel);
             $class = $protocolLevel !== ProtocolInterface::MQTT_PROTOCOL_LEVEL_5_0 ? V3::class : V5::class;
             if (!$this->container->has($class)) {
                 $server->close($fd);
