@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Cherrain\MqttServer;
 
+use Cherrain\MqttServer\Utils\Context;
 use Cherrain\MqttServer\Version\V3;
 use Cherrain\MqttServer\Version\V5;
 use Cherrain\MqttServer\Vo\RequestVo;
 use Psr\Container\ContainerInterface;
-use Psr\SimpleCache\CacheInterface;
 use Cherrain\MqttServer\Protocol\ProtocolInterface;
 use Cherrain\MqttServer\Protocol\Types;
 use Cherrain\MqttServer\Tools\UnPackTool;
@@ -47,15 +47,14 @@ class Server
 
     public function onReceive(SwooleServer $server, $fd, $fromId, $data)
     {
-
-        $cache = $this->container->get(CacheInterface::class);
-        $protocolLevelKey = ProtocolInterface::class.":" . $fd;
         try {
-            $protocolLevel = $cache->get($protocolLevelKey);
+            Context::set('fd', $fd);
+            $protocolLevel = Context::get('protocolLevel');
+
             if (UnPackTool::getType($data) == Types::CONNECT) {
-                $cache->set($protocolLevelKey, $protocolLevel = UnPackTool::getLevel($data));
+                Context::set('protocolLevel', $protocolLevel = UnPackTool::getLevel($data));
             }
-            //echo "\033[0;31mProtocolLevel: {$protocolLevel}\033[0m\r\n";
+            var_dump($protocolLevel);
             $class = $protocolLevel !== ProtocolInterface::MQTT_PROTOCOL_LEVEL_5_0 ? V3::class : V5::class;
             if (!$this->container->has($class)) {
                 $server->close($fd);
@@ -112,9 +111,6 @@ class Server
     public function onClose(SwooleServer $server, $fd, $fromId)
     {
         try {
-            $cache = $this->container->get(CacheInterface::class);
-            $protocolLevelKey = ProtocolInterface::class.":" . $fd;
-            $cache->delete($protocolLevelKey);
             $request = new RequestVo();
             $request->setServer($server);
             [$class, $func] = $this->receiveCallbacks['close'];
