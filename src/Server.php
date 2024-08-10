@@ -48,7 +48,7 @@ class Server
     public function onReceive(SwooleServer $server, $fd, $fromId, $data)
     {
         try {
-            Context::set('fd', $fd);
+            Context::set(Context::FD, $fd);
             $protocolLevel = Context::get('protocolLevel');
 
             if (UnPackTool::getType($data) == Types::CONNECT) {
@@ -110,6 +110,8 @@ class Server
     public function onClose(SwooleServer $server, $fd, $fromId)
     {
         try {
+            Context::set(Context::FD, $fd);
+            Context::release($fd);
             $request = new RequestVo();
             $request->setServer($server);
             [$class, $func] = $this->receiveCallbacks['close'];
